@@ -8,7 +8,7 @@ ViteとTailwind CSS v4を使用したシンプルなVanilla JavaScriptプロジ�
 - 🎨 [Tailwind CSS v4](https://tailwindcss.com/) - ユーティリティファーストのCSSフレームワーク
 - 📦 [Lucide Icons](https://lucide.dev/) - 美しいオープンソースアイコンライブラリ
 - 🔧 Vanilla JavaScript - フレームワークなしのシンプルなセットアップ
-- 📄 複数HTMLページ対応 - pages/ディレクトリの全HTMLファイルを自動ビルド（階層構造もサポート）
+- 📄 複数HTMLページ対応 - プロジェクトルートの全HTMLファイルを自動ビルド
 
 ## 📋 必要要件
 
@@ -51,9 +51,9 @@ pnpm preview
 
 ```
 vite-vanilla-tailwind/
-├── pages/              # HTMLページ（階層構造可能）
-│   └── index.html     # トップページ
-├── public/             # 静的ファイル
+├── index.html         # トップページ
+├── about.html         # Aboutページ
+├── public/            # 静的ファイル
 ├── src/
 │   ├── main.js        # エントリーポイント
 │   └── style.css      # Tailwind CSSのインポート
@@ -64,17 +64,18 @@ vite-vanilla-tailwind/
 
 ## 📄 マルチページビルド
 
-このプロジェクトは複数のHTMLページを自動的にビルドするよう設定されています。階層構造にも対応しています。
+このプロジェクトは複数のHTMLページを自動的にビルドするよう設定されています。
 
 ### HTMLページの追加方法
 
-**フラット構造:**
+プロジェクトのルートディレクトリに新しいHTMLファイルを追加するだけで、自動的にビルド対象に含まれます：
 
 ```
-pages/
+vite-vanilla-tailwind/
 ├── index.html
 ├── about.html
-└── contact.html
+├── contact.html
+└── ...
 ```
 
 ビルド結果:
@@ -83,48 +84,25 @@ dist/
 ├── index.html
 ├── about.html
 └── contact.html
-```
-
-**階層構造:**
-
-```
-pages/
-├── index.html
-├── about.html
-└── blog/
-    ├── index.html
-    └── first-post.html
-```
-
-ビルド結果:
-```
-dist/
-├── index.html
-├── about.html
-└── blog/
-    ├── index.html
-    └── first-post.html
 ```
 
 ### 仕組み
 
-`vite.config.js`で[glob](https://www.npmjs.com/package/glob)を使用して、`pages/`ディレクトリ内の全ての`*.html`ファイルを再帰的に検出し、Viteのマルチページビルドに登録しています。
+`vite.config.js`で[glob](https://www.npmjs.com/package/glob)を使用して、プロジェクトルート直下の全ての`*.html`ファイルを検出し、Viteのマルチページビルドに登録しています。
 
 ```javascript
-const files = glob.sync('pages/**/*.html')
+const files = glob.sync('*.html')
 const input = Object.fromEntries(
   files.map((file) => [
-    path.relative('pages', file).replace('.html', ''),
+    path.basename(file, '.html'),
     path.resolve(__dirname, file),
   ]),
 )
 ```
 
 開発時は通常通り各HTMLファイルに直接アクセスできます：
-- `http://localhost:5173/` - pages/index.html
-- `http://localhost:5173/about.html` - pages/about.html
-- `http://localhost:5173/blog/` - pages/blog/index.html
-- `http://localhost:5173/blog/first-post.html` - pages/blog/first-post.html
+- `http://localhost:5173/` - index.html
+- `http://localhost:5173/about.html` - about.html
 
 ## 🎨 Tailwind CSS v4 の使い方
 
