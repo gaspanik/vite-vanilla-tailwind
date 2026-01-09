@@ -21,4 +21,12 @@ export default defineConfig({
       input,
     },
   },
+  // path aliases
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  // base path for deploying to a subdirectory
+  // base: './',
 })
